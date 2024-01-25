@@ -1,5 +1,5 @@
 # Base image
-FROM ubuntu
+FROM ubuntu:latest
 
 # Install dependencies
 RUN apt-get update && \
@@ -9,7 +9,7 @@ RUN apt-get update && \
 WORKDIR /wisecow
 
 # Copy files
-COPY . /wisecow/
+COPY . wisecow
 
 # Convert line endings
 RUN dos2unix /wisecow/wisecow/wisecow.sh
