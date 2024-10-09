@@ -1,0 +1,80 @@
+pipeline {
+    agent any
+    
+    environment {
+        AWS_REGION = 'us-east-1'  // Specify your AWS region for public ECR
+        ECR_PUBLIC_REGISTRY = 'public.ecr.aws/o8g4t5k9'  // Replace with your public ECR registry URI
+        ECR_REPOSITORY = 'react-app'  // Replace with your ECR repository name
+        IMAGE_TAG = "latest"  // Using latest tag or you can use ${env.BUILD_ID} for dynamic tags
+    }
+    
+    stages {
+        stage('Checkout Code') {
+            steps {
+                // Check out the code from your repository
+                git branch: 'main', url: 'https://github.com/KuShivam045/AmazonEKS.git'   
+            }
+        }
+        
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    // Build Docker image
+                    docker.build("${ECR_REPOSITORY}:${IMAGE_TAG}")
+                }
+            }
+        }
+        
+        stage('Authenticate to Public AWS ECR') {
+            steps {
+                script {
+                    // Authenticate Docker to public AWS ECR
+                    sh '''
+                        aws ecr-public get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${ECR_PUBLIC_REGISTRY}
+                    '''
+                }
+            }
+        }
+        
+        stage('Tag and Push Docker Image to Public ECR') {
+            steps {
+                script {
+                    // Tag the Docker image with the public ECR registry
+                    sh '''
+                        docker tag ${ECR_REPOSITORY}:${IMAGE_TAG} ${ECR_PUBLIC_REGISTRY}/${ECR_REPOSITORY}:${IMAGE_TAG}
+                    '''
+                    
+                    // Push the Docker image to the public AWS ECR repository
+                    sh '''
+                        docker push ${ECR_PUBLIC_REGISTRY}/${ECR_REPOSITORY}:${IMAGE_TAG}
+                    '''
+                }
+            }
+        }
+
+        stage('Deploy to Kubernetes') {
+            steps {
+                script {
+                    // Update the Kubernetes deployment with the new image
+                    sh '''
+                        kubectl apply -f deployment.yml
+                    '''
+                }
+            }
+        }
+    }
+    
+    post {
+        always {
+            // Cleanup Docker images to free up space on the agent
+            sh 'docker rmi ${ECR_REPOSITORY}:${IMAGE_TAG} || true'
+            sh 'docker rmi ${ECR_PUBLIC_REGISTRY}/${ECR_REPOSITORY}:${IMAGE_TAG} || true'
+        }
+        success {
+            echo 'Deployment to Public AWS ECR was successful!'
+        }
+        failure {
+            echo 'Deployment failed.'
+        }
+    }
+}

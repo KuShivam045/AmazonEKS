@@ -1,0 +1,18 @@
+# Ignore node_modules to avoid copying them into the Docker image
+node_modules
+npm-debug.log
+yarn-error.log
+
+# Ignore local environment files
+.env
+.DS_Store
+
+# Ignore build outputs (they will be generated inside the container)
+build
+
+# Ignore any Dockerfile itself and .dockerignore
+Dockerfile
+.dockerignore
+
+# Ignore logs and other local files
+*.log
