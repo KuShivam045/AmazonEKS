@@ -57,7 +57,7 @@ pipeline {
                 script {
                     // Update the Kubernetes deployment with the new image
                     sh '''
-                        kubectl apply -f deployment.yml
+                        kubectl apply -f k8s-deployment.yml
                     '''
                 }
             }
