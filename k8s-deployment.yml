@@ -20,9 +20,9 @@ spec:
         app.kubernetes.io/name: react-deployment
     spec:
       containers:
-      - image: public.ecr.aws/o8g4t5k9/k8s-react  
+      - name: react-app
+        image: public.ecr.aws/o8g4t5k9/react-app:latest
         imagePullPolicy: Always
-        name: react-deployment
         ports:
         - containerPort: 3000
 ---
