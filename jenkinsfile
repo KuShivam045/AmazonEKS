@@ -58,8 +58,22 @@ pipeline {
                     // Update the Kubernetes deployment with the new image
                     sh '''
                         kubectl apply -f k8s-deployment.yml
+                        
+                    '''
+                }
+            }
+        }
+
+        stage('Rollout New changes to EKS Cluster') {
+            steps {
+                script {
+                    // Update the Kubernetes deployment with the new image
+                    sh '''
                         # Rollout restart the deployment to apply the new image
                         kubectl rollout restart deployment/deployment-react -n reactor
+                        # Rollout status verify that the rollout has been completed
+                        kubectl rollout status deployment deployment-react -n reactor
+
                     '''
                 }
             }
