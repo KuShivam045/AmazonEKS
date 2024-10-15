@@ -1,52 +1,74 @@
 * {
+  box-sizing: border-box;
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  line-height: 1.6;
+  background-color: #f4f4f4;
+  color: #333;
 }
 
 .App {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh; /* Full viewport height */
+  max-width: 800px;
+  margin: 20px auto;
   padding: 20px;
-  background-color: #e9ecef; /* Light gray background */
-  font-family: 'Arial', sans-serif; /* Modern font */
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 .content {
-  max-width: 800px; /* Maximum width for the content */
-  background-color: white; /* White background for content */
-  border-radius: 8px; /* Rounded corners */
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-  padding: 30px; /* Padding inside the content */
-  text-align: left; /* Align text to the left */
+  padding: 20px;
 }
 
 h2 {
-  margin-bottom: 20px; /* Space below the title */
-  font-size: 24px; /* Larger font size for main title */
-  color: #343a40; /* Darker color for title */
+  color: #4CAF50;
+  font-size: 2em;
+  margin-bottom: 10px;
 }
 
 h3 {
-  margin-top: 20px; /* Space above subsections */
-  margin-bottom: 10px; /* Space below subsections */
-  font-size: 20px; /* Font size for subtitles */
-  color: #495057; /* Medium color for subtitles */
+  color: #333;
+  font-size: 1.5em;
+  margin: 20px 0 10px;
 }
 
 p {
-  margin-bottom: 15px; /* Space between paragraphs */
-  line-height: 1.6; /* Increased line height for readability */
+  margin: 10px 0;
+  line-height: 1.5;
 }
 
 ul {
-  margin-left: 20px; /* Indent list items */
-  margin-bottom: 20px; /* Space below lists */
-  list-style-type: disc; /* Bullet points for lists */
+  list-style-type: square;
+  padding-left: 20px;
+  margin: 15px 0;
 }
 
 li {
-  margin-bottom: 10px; /* Space between list items */
+  margin-bottom: 10px;
+}
+
+strong {
+  color: #4CAF50; /* Color for tool names */
+}
+
+@media (max-width: 600px) {
+  .App {
+    padding: 15px;
+  }
+
+  h2 {
+    font-size: 1.8em;
+  }
+
+  h3 {
+    font-size: 1.3em;
+  }
+
+  p, li {
+    font-size: 0.9em;
+  }
 }
