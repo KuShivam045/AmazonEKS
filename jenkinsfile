@@ -58,6 +58,8 @@ pipeline {
                     // Update the Kubernetes deployment with the new image
                     sh '''
                         kubectl apply -f k8s-deployment.yml
+                        # Rollout restart the deployment to apply the new image
+                        kubectl rollout restart deployment/deployment-react -n reactor
                     '''
                 }
             }
