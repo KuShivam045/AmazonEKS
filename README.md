@@ -1,70 +1,43 @@
-# Getting Started with Create React App
+# Jenkins CI/CD Pipeline for Deploying Dockerized React App on AWS EKS
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This repository demonstrates how to set up an end-to-end CI/CD pipeline using Jenkins for deploying a Dockerized React application to an AWS EKS cluster. It covers everything from setting up an EC2 instance for Jenkins to automating deployments using GitHub webhooks.
 
-## Available Scripts
+## Prerequisites
 
-In the project directory, you can run:
+Before you begin, ensure you have the following:
 
-### `npm start`
+- An AWS account with IAM user permissions for EKS, EC2, and ECR.
+- An EC2 instance running Ubuntu (t2.medium recommended).
+- AWS CLI, `kubectl`, and `eksctl` installed on the EC2 instance.
+- A public AWS ECR repository to store Docker images.
+- A GitHub repository containing your React application code.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Table of Contents
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+- [Setup EC2 Instance](#setup-ec2-instance)
+- [Install Jenkins](#install-jenkins)
+- [Configure Jenkins](#configure-jenkins)
+- [Install AWS CLI, Kubectl, and Eksctl](#install-aws-cli-kubectl-and-eksctl)
+- [Setup EKS Cluster](#setup-eks-cluster)
+- [Create Kubernetes Deployment](#create-kubernetes-deployment)
+- [Write the Jenkinsfile](#write-the-jenkinsfile)
+- [Configure GitHub Webhook](#configure-github-webhook)
+- [Testing the Pipeline](#testing-the-pipeline)
+- [Contributing](#contributing)
+- [License](#license)
 
-### `npm test`
+## Setup EC2 Instance
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+1. Create an EC2 instance using Ubuntu AMI in your preferred region. We chose **Asia Pacific (Mumbai)** (`ap-south-1`).
+2. Choose an instance type, at least **t2.medium** for smooth performance.
+3. Update security group inbound rules to allow the following ports:
+   - `22` for SSH
+   - `80` for HTTP
+   - `443` for HTTPS
+   - `8080` for Jenkins
 
-### `npm run build`
+## Install Jenkins
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+1. SSH into the EC2 instance:
+   ```bash
+   ssh -i your-key.pem ubuntu@your-ec2-public-ip
